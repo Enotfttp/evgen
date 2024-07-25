@@ -56,7 +56,7 @@ const Login: React.FC = () => {
       localStorage.setItem("role", data.role);
       localStorage.setItem("id", data.id);
       localStorage.setItem("fio", data.fio);
-      navigate("/orders");
+      navigate("/acts");
       return;
     }
     setError(data);
@@ -64,9 +64,9 @@ const Login: React.FC = () => {
 
   return (
     <form className={styles.login_form}>
-      <h2 className={styles["login_form-title"]}>SIGN IN</h2>
+      <h2 className={styles["login_form-title"]}>Авторизация</h2>
       <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
-        <InputLabel htmlFor="outlined-adornment-password">Login</InputLabel>
+        <InputLabel htmlFor="outlined-adornment-password">Логин</InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
           type="text"
@@ -77,7 +77,7 @@ const Login: React.FC = () => {
         />
       </FormControl>
       <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
-        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+        <InputLabel htmlFor="outlined-adornment-password">Пароль</InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
           type={showPassword ? "text" : "password"}
@@ -105,10 +105,10 @@ const Login: React.FC = () => {
           sx={{ width: "25ch" }}
           onClick={handleSingIn}
           disabled={!password || !login}>
-          SIGN IN
+          Войти
         </Button>
         <LinkRoute to="/registr">
-          <Link underline="hover">{"SIGN UP"}</Link>
+          <Link underline="hover">Регистрация</Link>
         </LinkRoute>
       </div>
       {error && (

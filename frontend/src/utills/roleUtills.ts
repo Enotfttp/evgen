@@ -1,4 +1,4 @@
 export const roles = {
-    admin: 'Админ',
+    admin: 'Администратор',
     customer: 'Заказчик',
 }

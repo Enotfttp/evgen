@@ -8,8 +8,8 @@ export const signIn = async (login: string, password: string) => {
         return 'Логин или пароль введены не правильно'
     }
 }
-export const signUp = async (fio: string, phoneNumber: number, login: string, password: string, kindergarten: string) => {
-    const data = await postRequest(`/api/signUp/${login}`, {}, { fio, phoneNumber, login, password, kindergarten });
+export const signUp = async (fio: string, phoneNumber: number, login: string, password: string) => {
+    const data = await postRequest(`/api/signUp/${login}`, {}, { fio, phoneNumber, login, password });
     if (data) {
         return data
     } else {

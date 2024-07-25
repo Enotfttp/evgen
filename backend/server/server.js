@@ -15,7 +15,7 @@ const pool = mysql.createPool({
   connectionLimit: 5,
   host: "localhost",
   user: "root",
-  database: "pre_diplom",
+  database: "evgen",
   password: "root",
 });
 
@@ -50,18 +50,12 @@ server.post("/api/signIn/:login", (req, res) => {
 // Регистрация
 server.post("/api/signUp/:login", (req, res) => {
   if (!req.body) return res.sendStatus(400);
-  const { fio, phoneNumber, login, password, kindergarten } = req.body;
+  const { fio, phoneNumber, login, password } = req.body;
   pool.query(
-    `INSERT INTO kindergartens (id_kindergarten, name_kindergarten, id_order, id_status) VALUES (NULL, '${kindergarten}', NULL, 4);`,
-    (err, dataKindergarten) => {
+    `INSERT INTO users (id_user, fio_user, id_role, phone_user, login, password) VALUES (NULL, '${fio}', '2', '${phoneNumber}', '${login}', '${password}');`,
+    (err, data) => {
       if (err) return console.error(err);
-      pool.query(
-        `INSERT INTO users (id_user, fio_user, id_role, phone_user, login, password, id_kindergarten) VALUES (NULL, '${fio}', '2', '${phoneNumber}', '${login}', '${password}', '${dataKindergarten.insertId}');`,
-        (err, data) => {
-          if (err) return console.error(err);
-          return res.json({ login, password });
-        }
-      );
+      return res.json({ login, password });
     }
   );
 });
@@ -99,33 +93,58 @@ server.get("/api/roles", function (req, res) {
   });
 });
 
-// Удаление пользователя
-server.delete("/api/user/delete/:id", function (req, res) {
-  if (!req.body) return res.sendStatus(400);
-  const { id } = req.body;
-  pool.query(`Delete From users where id_user = '${id}'`, function (err, data) {
+// Получение всех статусов
+server.get("/api/statuses_ci", function (req, res) {
+  pool.query("SELECT * FROM statuses_ci", function (err, data) {
     if (err) return console.error(err);
-    res.json("delete user");
+    if (!data.length) return res.sendStatus(400);
+    res.json(data);
   });
 });
 
-// Редактирование пользователя
-server.put("/api/user/edit/:id", function (req, res) {
-  if (!req.body) return res.sendStatus(400);
-  const { id, fio, idRole, phoneNumber } = req.body;
+// Получение всех статусов
+server.get("/api/statuses_cp", function (req, res) {
+  pool.query("SELECT * FROM statuses_cp", function (err, data) {
+    if (err) return console.error(err);
+    if (!data.length) return res.sendStatus(400);
+    res.json(data);
+  });
+});
+
+// Получение всех типо работ
+server.get("/api/type_work", function (req, res) {
+  pool.query("SELECT * FROM type_work", function (err, data) {
+    if (err) return console.error(err);
+    res.json(data);
+  });
+});
+
+// Получение всех заказов под ролью админа
+server.get("/api/acts_adm", function (req, res) {
   pool.query(
-    `UPDATE \`users\` SET \`fio_user\` = '${fio}', \`id_role\` = '${idRole}', \`phone_user\` = '${phoneNumber}' WHERE users.id_user = '${id}'`,
+    `SELECT acts.id_act, acts.num_document, acts.organization, acts.date_input, acts.date_export, statuses_cp.name_status_cp, statuses_ci.name_status_ci, type_work.name_type, users.fio_user FROM (((( acts
+        INNER JOIN statuses_cp ON acts.id_status_cp = statuses_cp.id_status_cp)
+        INNER JOIN statuses_ci ON acts.id_status_ci = statuses_ci.id_status_ci)
+        INNER JOIN type_work ON acts.id_type = type_work.id_type)
+        INNER JOIN users ON acts.id_user = users.id_user)`,
     function (err, data) {
       if (err) return console.error(err);
-      res.json("user updated");
+      res.json(data);
     }
   );
 });
 
 // Получение всех заказов
-server.get("/api/orders", function (req, res) {
+server.get("/api/acts", function (req, res) {
+  if (!req.body) return res.sendStatus(400);
+  const { id } = req.body;
   pool.query(
-    "SELECT orders.`id_order`, `date_order`, `full_price`, `comment`, kindergartens.name_kindergarten,  statuses.name_status FROM ((orders INNER JOIN kindergartens ON orders.id_kindergarten = kindergartens.id_kindergarten) INNER JOIN statuses ON orders.id_status = statuses.id_status)",
+    `SELECT acts.id_act, acts.num_document, acts.organization, acts.date_input, acts.date_export, statuses_cp.name_status_cp, statuses_ci.name_status_ci, type_work.name_type, users.fio_user FROM (((( acts
+        INNER JOIN statuses_cp ON acts.id_status_cp = statuses_cp.id_status_cp)
+        INNER JOIN statuses_ci ON acts.id_status_ci = statuses_ci.id_status_ci)
+        INNER JOIN type_work ON acts.id_type = type_work.id_type)
+        INNER JOIN users ON acts.id_user = users.id_user)
+        WHERE acts.id_user='${id}'`,
     function (err, data) {
       if (err) return console.error(err);
       res.json(data);
@@ -134,174 +153,58 @@ server.get("/api/orders", function (req, res) {
 });
 
 // Удаление заказа
-server.delete("/api/order/delete/:id", function (req, res) {
+server.delete("/api/act/delete/:id", function (req, res) {
   if (!req.body) return res.sendStatus(400);
   const { id } = req.body;
-  pool.query(
-    `Delete From orders where id_order = '${id}'`,
-    function (err, data) {
-      if (err) return console.error(err);
-      res.json("delete order");
-    }
-  );
+  pool.query(`Delete From acts where id_act = '${id}'`, function (err, data) {
+    if (err) return console.error(err);
+    res.json("act deleted");
+  });
 });
 
 // Редактирование заказа
-server.put("/api/order/edit/:id", function (req, res) {
+server.put("/api/act/edit/:id", function (req, res) {
   if (!req.body) return res.sendStatus(400);
-  const { id, name_material, count_material, price_material } = req.body;
+  const {
+    id,
+    num_document,
+    organization,
+    date_input,
+    date_export,
+    id_type,
+    id_status_cp,
+    id_status_ci,
+  } = req.body;
   pool.query(
-    `UPDATE \`materials\` SET \`name_material\` = '${name_material}', \`count_material\` = '${count_material}', \`price_material\` = '${price_material}' WHERE id_material = ${id} `,
+    `UPDATE acts 
+       SET acts.num_document = '${num_document}', acts.organization = '${organization}', acts.date_input = '${date_input}', acts.date_export = '${date_export}', acts.id_type ='${id_type}', acts.id_status_cp = '${id_status_cp}' ,acts.id_status_ci = '${id_status_ci}'
+       WHERE acts.id_act = ${id}`,
     function (err, data) {
       if (err) return console.error(err);
-      res.json("order updated");
+      res.json("act updated");
     }
   );
 });
 
 // Добавление заказа
-server.post("/api/order/add", function (req, res) {
+server.post("/api/act/add", function (req, res) {
   if (!req.body) return res.sendStatus(400);
   const {
-    id_order,
-    id_kindergarten,
-    date_order,
-    id_status,
-    full_price,
-    comment,
+    num_document,
+    organization,
+    date_input,
+    date_export,
+    id_type,
+    id_status_cp,
+    id_status_ci,
+    id_user,
   } = req.body;
   pool.query(
-    `INSERT INTO orders (id_order, id_kindergarten, date_order, id_status, full_price, comment) VALUES ('${id_order}', '${id_kindergarten}', '${date_order}', '${id_status}', '${full_price}', '${comment}');`,
+    `INSERT INTO acts (id_act, num_document, organization, id_type, date_input, date_export, id_status_cp, id_status_ci, id_user) 
+        VALUES (NULL, '${num_document}', '${organization}', '${id_type}','${date_input}', '${date_export}', '${id_status_cp}', '${id_status_ci}', '${id_user}');`,
     function (err, data) {
       if (err) return console.error(err);
-      res.json("order updated");
-    }
-  );
-});
-
-// Получение всех статусов
-server.get("/api/statuses", function (req, res) {
-  pool.query("SELECT * FROM statuses", function (err, data) {
-    if (err) return console.error(err);
-    if (!data.length) return res.sendStatus(400);
-    res.json(data);
-  });
-});
-
-// Получение всех материалов
-server.get("/api/materials", function (req, res) {
-  pool.query("SELECT * FROM materials", function (err, data) {
-    if (err) return console.error(err);
-    if (!data.length) return res.sendStatus(400);
-    res.json(data);
-  });
-});
-
-// Удаление материала
-server.delete("/api/material/delete/:id", function (req, res) {
-  if (!req.body) return res.sendStatus(400);
-  const { id } = req.body;
-  pool.query(
-    `Delete From materials where id_material = '${id}'`,
-    function (err, data) {
-      if (err) return console.error(err);
-      res.json("delete material");
-    }
-  );
-});
-
-// Редактирование материала
-server.put("/api/material/edit/:idKindergarten", function (req, res) {
-  if (!req.body) return res.sendStatus(400);
-  const { id, name_material, count_material, price_material } = req.body;
-  pool.query(
-    `UPDATE \`materials\` SET \`name_material\` = '${name_material}', \`count_material\` = '${count_material}', \`price_material\` = '${price_material}' WHERE id_material = ${id} `,
-    function (err, data) {
-      if (err) return console.error(err);
-      res.json("material updated");
-    }
-  );
-});
-
-// Добавление материала
-server.post("/api/material/add", function (req, res) {
-  if (!req.body) return res.sendStatus(400);
-  const { name_material, count_material, price_material } = req.body;
-  pool.query(
-    `INSERT INTO materials (id_material, name_material, count_material, price_material) VALUES (NULL, '${name_material}', '${count_material}', '${price_material}');`,
-    function (err, data) {
-      if (err) return console.error(err);
-      res.json("kindergartens updated");
-    }
-  );
-});
-
-// Получение всех садиков
-// FIX Расширить добалвение и редактирование
-server.get("/api/kindergartens", function (req, res) {
-  pool.query(
-    "SELECT name_kindergarten, statuses.name_status, id_order FROM ( kindergartens INNER JOIN statuses ON kindergartens.id_status = statuses.id_status)",
-    function (err, data) {
-      if (err) return console.error(err);
-      if (!data.length) return res.sendStatus(400);
-
-      res.json(data);
-    }
-  );
-});
-
-// Удаление садика
-server.delete("/api/kindergarten/delete/:id", function (req, res) {
-  if (!req.body) return res.sendStatus(400);
-  const { id } = req.body;
-  pool.query(
-    `Delete From kindergartens where id_kindergarten = '${id}'`,
-    function (err, data) {
-      if (err) return console.error(err);
-      res.json("delete kindergarten");
-    }
-  );
-});
-
-// Редактирование садика
-server.put("/api/kindergarten/edit/:idKindergarten", function (req, res) {
-  if (!req.body) return res.sendStatus(400);
-  const { id, kindergarten, id_order } = req.body;
-  pool.query(
-    `UPDATE kindergartens
-        JOIN orders ON kindergartens.id_kindergarten = orders.id_kindergarten
-        SET kindergartens.name_kindergarten = '${kindergarten}', orders.id_order = '${id_order}'
-        WHERE id_kindergarten = ${id}`,
-    function (err, data) {
-      if (err) return console.error(err);
-      res.json("kindergarten updated");
-    }
-  );
-});
-
-// Добавление садика
-server.post("/api/kindergarten/add", function (req, res) {
-  if (!req.body) return res.sendStatus(400);
-  const { kindergarten } = req.body;
-  pool.query(
-    `INSERT INTO kindergartens (id_kindergarten, name_kindergarten, id_order) VALUES (NULL, '${kindergarten}', NULL);`,
-    function (err, data) {
-      if (err) return console.error(err);
-      res.json("kindergartens updated");
-    }
-  );
-});
-
-// Редактирование авиакомпании
-// CHECK
-server.put("/api/airline/edit/:id", function (req, res) {
-  if (!req.body) return res.sendStatus(400);
-  const { id, nameCompany, createYears, countPlanes } = req.body;
-  pool.query(
-    `UPDATE \`airlines\` SET \`Название авиакомпании\` = '${nameCompany}', \`Год основания\` = '${createYears}', \`Количество самолётов\` = '${countPlanes}' WHERE \`airlines\`.\`idАвиакомпании\` = ${id}`,
-    function (err, data) {
-      if (err) return console.error(err);
-      res.json("airline updated");
+      res.json("act updated");
     }
   );
 });

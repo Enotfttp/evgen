@@ -22,7 +22,6 @@ const Registr: React.FC = () => {
   const [repeatPassword, setRepeatPassword] = React.useState<string>("");
   const [fio, setFIO] = React.useState("");
   const [phoneNumber, setPhoneNumber] = React.useState<number>(0);
-  const [kindergarten, setKindergarten] = React.useState<string>("");
   const [error, setError] = React.useState<string | null>(null);
 
   const handleClickShowPassword = React.useCallback(() => {
@@ -51,13 +50,7 @@ const Registr: React.FC = () => {
     },
     []
   );
-  const handleKindergarten = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const target = event.target as HTMLInputElement;
-      setKindergarten(target.value);
-    },
-    []
-  );
+
   const handlePassword = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       event.preventDefault();
@@ -84,7 +77,7 @@ const Registr: React.FC = () => {
   );
 
   const handleSingUp = React.useCallback(async () => {
-    const data = await signUp(fio, phoneNumber, login, password, kindergarten);
+    const data = await signUp(fio, phoneNumber, login, password);
     if (typeof data === "object") {
       localStorage.setItem("login", login);
       localStorage.setItem("password", password);
@@ -92,19 +85,18 @@ const Registr: React.FC = () => {
       return;
     }
     setError(data);
-  }, [fio, login, navigate, password, phoneNumber, kindergarten]);
+  }, [fio, login, navigate, password, phoneNumber]);
 
   React.useEffect(() => {
     if (password !== repeatPassword) setError("Введеные пароли не совпадают");
-    else if (!kindergarten) setError("Введите название садика");
     else setError(null);
-  }, [password, repeatPassword, kindergarten]);
+  }, [password, repeatPassword]);
 
   return (
     <form className={styles.registr_form}>
-      <h2 className={styles["registr_form-title"]}>SIGN UP</h2>
+      <h2 className={styles["registr_form-title"]}>Регистрация</h2>
       <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
-        <InputLabel htmlFor="outlined-adornment-password">FIO</InputLabel>
+        <InputLabel htmlFor="outlined-adornment-password">ФИО</InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
           type="text"
@@ -116,7 +108,7 @@ const Registr: React.FC = () => {
       </FormControl>
       <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
         <InputLabel htmlFor="outlined-adornment-password">
-          Phone number
+          Номер телефона
         </InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
@@ -128,20 +120,7 @@ const Registr: React.FC = () => {
         />
       </FormControl>
       <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
-        <InputLabel htmlFor="outlined-adornment-password">
-          Kindergarten
-        </InputLabel>
-        <OutlinedInput
-          id="outlined-adornment-password"
-          type="text"
-          label="Kindergarten"
-          autoComplete="off"
-          onChange={handleKindergarten}
-          value={kindergarten}
-        />
-      </FormControl>
-      <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
-        <InputLabel htmlFor="outlined-adornment-password">Login</InputLabel>
+        <InputLabel htmlFor="outlined-adornment-password">Логин</InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
           type="text"
@@ -152,7 +131,7 @@ const Registr: React.FC = () => {
         />
       </FormControl>
       <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
-        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+        <InputLabel htmlFor="outlined-adornment-password">Пароль</InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
           type={showPassword ? "text" : "password"}
@@ -175,7 +154,7 @@ const Registr: React.FC = () => {
       </FormControl>
       <FormControl sx={{ m: 1, width: "50ch" }} variant="outlined">
         <InputLabel htmlFor="outlined-adornment-password">
-          Repeat password
+          Повторите пароль
         </InputLabel>
         <OutlinedInput
           id="outlined-adornment-password"
@@ -209,13 +188,12 @@ const Registr: React.FC = () => {
             !password ||
             !phoneNumber ||
             !repeatPassword ||
-            !kindergarten ||
             !!error
           }>
-          SIGN UP
+          Регистрация
         </Button>
         <LinkRoute to="/">
-          <Link underline="hover">{"SIGN IN"}</Link>
+          <Link underline="hover">Авторизация</Link>
         </LinkRoute>
       </div>
       {error && (

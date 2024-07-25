@@ -191,14 +191,14 @@ const AddModal: React.FC<IAddModal> = ({
             color="success"
             disabled={isDisabled}
             onClick={handleSave}>
-            Save
+            Сохранить
           </Button>
           <Button
             variant="contained"
             size="medium"
             sx={{ width: "25ch" }}
             onClick={handleClose}>
-            No
+            Нет
           </Button>
         </div>
       </div>

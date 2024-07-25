@@ -49,7 +49,7 @@ const TableData: React.FC<ITable> = ({
               color="success"
               size="large"
               sx={{ width: "25ch" }}>
-              Add
+              Добавить
             </Button>
           </div>
         )}
@@ -72,8 +72,8 @@ const TableData: React.FC<ITable> = ({
           <TableBody>{children}</TableBody>
         </Table>
       </TableContainer>
-      {roles.admin === localStorage.getItem("role") && (
-        <>
+      <>
+        {roles.admin === localStorage.getItem("role") && (
           <MiniModal
             open={openModal}
             handleClose={handleClose}
@@ -82,15 +82,15 @@ const TableData: React.FC<ITable> = ({
             data={data}
             fields={columns}
           />
-          <AddModal
-            isShow={isShowAddModal}
-            handleAdd={handleAdd}
-            onClose={handleShowAddModal}
-            fields={columns}
-            data={data}
-          />
-        </>
-      )}
+        )}
+        <AddModal
+          isShow={isShowAddModal}
+          handleAdd={handleAdd}
+          onClose={handleShowAddModal}
+          fields={columns}
+          data={data}
+        />
+      </>
     </div>
   );
 };

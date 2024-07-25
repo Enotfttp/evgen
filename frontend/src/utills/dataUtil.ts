@@ -12,7 +12,10 @@ export const uniqArrayForModal = (data: any, currentData: any, field: string) =>
 
 export const checkIsArrayDataFromModal = (data: any) => {
     if (Array.isArray(data)) {
-        return data?.[0]?.id;
+        if (data?.[0]?.id) {
+            return data?.[0]?.id;
+        }
+        return data?.[1]?.id
     } else {
         return data.id;
     }
