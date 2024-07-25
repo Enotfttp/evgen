@@ -169,14 +169,14 @@ const EditModal: React.FC<IEditModal> = ({
           sx={{ width: "25ch" }}
           color="success"
           onClick={handleSave}>
-          Save
+          Сохранить
         </Button>
         <Button
           variant="contained"
           size="medium"
           sx={{ width: "25ch" }}
           onClick={onClose}>
-          No
+          нет
         </Button>
       </div>
     </div>

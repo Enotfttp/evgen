@@ -81,9 +81,10 @@ export const editAct = async (id: string, num_document: string, organization: st
     }
 };
 
-export const addAct = async (num_document: string, organization: string, date_input: string, date_export: string, id_type: number, id_status_cp: number, id_status_ci: number, id_user: number) => {
+export const addAct = async (id_act: number, num_document: string, organization: string, date_input: string, date_export: string, id_type: number, id_status_cp: number, id_status_ci: number, id_user: number) => {
 
     const data = await postRequest(`/api/act/add`, {}, {
+        id_act,
         num_document,
         organization,
         date_input,

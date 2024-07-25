@@ -189,7 +189,6 @@ const AddModal: React.FC<IAddModal> = ({
             size="medium"
             sx={{ width: "25ch" }}
             color="success"
-            disabled={isDisabled}
             onClick={handleSave}>
             Сохранить
           </Button>

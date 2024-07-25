@@ -40,19 +40,18 @@ const TableData: React.FC<ITable> = ({
 
   return (
     <div>
-      {roles.admin === localStorage.getItem("role") &&
-        typeof handleAdd === "function" && (
-          <div className={styles.add_btn}>
-            <Button
-              onClick={handleShowAddModal}
-              variant="contained"
-              color="success"
-              size="large"
-              sx={{ width: "25ch" }}>
-              Добавить
-            </Button>
-          </div>
-        )}
+      {typeof handleAdd === "function" && (
+        <div className={styles.add_btn}>
+          <Button
+            onClick={handleShowAddModal}
+            variant="contained"
+            color="success"
+            size="large"
+            sx={{ width: "25ch" }}>
+            Добавить
+          </Button>
+        </div>
+      )}
       <TableContainer component={Paper} className={styles.table}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>

@@ -190,6 +190,7 @@ server.put("/api/act/edit/:id", function (req, res) {
 server.post("/api/act/add", function (req, res) {
   if (!req.body) return res.sendStatus(400);
   const {
+    id_act,
     num_document,
     organization,
     date_input,
@@ -201,7 +202,7 @@ server.post("/api/act/add", function (req, res) {
   } = req.body;
   pool.query(
     `INSERT INTO acts (id_act, num_document, organization, id_type, date_input, date_export, id_status_cp, id_status_ci, id_user) 
-        VALUES (NULL, '${num_document}', '${organization}', '${id_type}','${date_input}', '${date_export}', '${id_status_cp}', '${id_status_ci}', '${id_user}');`,
+        VALUES ('${id_act}', '${num_document}', '${organization}', '${id_type}','${date_input}', '${date_export}', '${id_status_cp}', '${id_status_ci}', '${id_user}');`,
     function (err, data) {
       if (err) return console.error(err);
       res.json("act updated");

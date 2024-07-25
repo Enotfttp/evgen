@@ -138,6 +138,7 @@ const Acts: React.FC = () => {
   const handleAdd = React.useCallback(
     (data: any) => {
       addAct(
+        data.id_act,
         data.num_document,
         data.organization,
         data.date_input,
@@ -204,7 +205,7 @@ const Acts: React.FC = () => {
         handleEdit={handleEdit}
         handleAdd={handleAdd}
         handleDelete={handleDelete}>
-        {data.length &&
+        {!!data.length &&
           data.map((row: any) => (
             <TableRow
               key={row.id_act}
