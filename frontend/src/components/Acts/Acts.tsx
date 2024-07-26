@@ -17,6 +17,7 @@ import {
   checkIsArrayDataFromModal,
   uniqArrayForModal,
 } from "../../utills/dataUtil";
+import { dateConverter } from "../../utills/dateUtills";
 import { roles } from "../../utills/roleUtills";
 import Header from "../Header/Header";
 import styles from "./Acts.module.sass";
@@ -137,12 +138,13 @@ const Acts: React.FC = () => {
 
   const handleAdd = React.useCallback(
     (data: any) => {
+      console.log("data123 = ", data);
       addAct(
         data.id_act,
         data.num_document,
         data.organization,
-        data.date_input,
-        data.date_export,
+        dateConverter(data.date_input, "date"),
+        dateConverter(data.date_export, "date"),
         checkIsArrayDataFromModal(data.name_typeSelect),
         checkIsArrayDataFromModal(data.name_status_cpSelect),
         checkIsArrayDataFromModal(data.name_status_ciSelect),
@@ -161,8 +163,8 @@ const Acts: React.FC = () => {
         data.id_act,
         data.num_document,
         data.organization,
-        data.date_input,
-        data.date_export,
+        dateConverter(data.date_input, "date"),
+        dateConverter(data.date_export, "date"),
         checkIsArrayDataFromModal(data.type_workSelect),
         checkIsArrayDataFromModal(data.name_status_cpSelect),
         checkIsArrayDataFromModal(data.name_status_ciSelect)
